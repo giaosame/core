@@ -46,12 +46,15 @@ func (c *Calcium) NodeResource(ctx context.Context, nodename string, fix bool) (
 	if err != nil {
 		return nil, logger.Err(ctx, err)
 	}
+
+	// TODO: =====================================================================
 	for _, workload := range nr.Workloads {
 		if _, err := workload.Inspect(ctx); err != nil { // 用于探测节点上容器是否存在
 			nr.Diffs = append(nr.Diffs, fmt.Sprintf("workload %s inspect failed %v \n", workload.ID, err))
 			continue
 		}
 	}
+	// TODO: =====================================================================
 	return nr, logger.Err(ctx, err)
 }
 
