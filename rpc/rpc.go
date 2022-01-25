@@ -143,6 +143,7 @@ func (v *Vibranium) ListPods(ctx context.Context, _ *pb.Empty) (*pb.Pods, error)
 
 // GetPodResource get pod nodes resource usage
 func (v *Vibranium) GetPodResource(ctx context.Context, opts *pb.GetPodOptions) (*pb.PodResource, error) {
+	fmt.Println("========================== Vibranium.GetPodResource ==========================")
 	r, err := v.cluster.PodResource(ctx, opts.Name)
 	if err != nil {
 		return nil, grpcstatus.Error(PodResource, err.Error())

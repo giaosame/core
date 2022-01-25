@@ -37,8 +37,15 @@ func (c *Calcium) PodResource(ctx context.Context, podname string) (*types.PodRe
 			return nil, logger.Err(ctx, err)
 		}
 		r.NodesResource = append(r.NodesResource, nodeResource)
+
+		numNodesResc := len(r.NodesResource)
+		fmt.Printf("number of r.NodesResource: %d, last resource = %v\n", numNodesResc, r.NodesResource[numNodesResc-1])
 	}
 	fmt.Println("========================== AFTER loop ==========================")
+
+	fmt.Printf("r.NodesResource: %v\n", r.NodesResource)
+	fmt.Println("================================================================")
+	fmt.Printf("PodResource return r: %v\n", *r)
 	return r, nil
 }
 
