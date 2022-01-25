@@ -16,8 +16,12 @@ import (
 
 // PodResource show pod resource usage
 func (c *Calcium) PodResource(ctx context.Context, podname string) (*types.PodResource, error) {
+	fmt.Println("========================== PodResource ==========================")
 	logger := log.WithField("Calcium", "PodResource").WithField("podname", podname)
 	nodes, err := c.ListPodNodes(ctx, podname, nil, true)
+
+	fmt.Printf("number of nodes: %d, nodes = %v\n", len(nodes), nodes)
+
 	if err != nil {
 		return nil, logger.Err(ctx, err)
 	}
@@ -25,6 +29,8 @@ func (c *Calcium) PodResource(ctx context.Context, podname string) (*types.PodRe
 		Name:          podname,
 		NodesResource: []*types.NodeResource{},
 	}
+
+	fmt.Println("========================== BEFORE loop ==========================")
 	for _, node := range nodes {
 		nodeResource, err := c.doGetNodeResource(ctx, node.Name, false)
 		if err != nil {
@@ -32,17 +38,21 @@ func (c *Calcium) PodResource(ctx context.Context, podname string) (*types.PodRe
 		}
 		r.NodesResource = append(r.NodesResource, nodeResource)
 	}
+	fmt.Println("========================== AFTER loop ==========================")
 	return r, nil
 }
 
 // NodeResource check node's workload and resource
 func (c *Calcium) NodeResource(ctx context.Context, nodename string, fix bool) (*types.NodeResource, error) {
+	fmt.Println("========================== NodeResource ==========================")
 	logger := log.WithField("Calcium", "NodeResource").WithField("nodename", nodename).WithField("fix", fix)
 	if nodename == "" {
 		return nil, logger.Err(ctx, types.ErrEmptyNodeName)
 	}
 
 	nr, err := c.doGetNodeResource(ctx, nodename, fix)
+	fmt.Printf("nodes = %v\n", nr)
+
 	if err != nil {
 		return nil, logger.Err(ctx, err)
 	}
@@ -59,6 +69,7 @@ func (c *Calcium) NodeResource(ctx context.Context, nodename string, fix bool) (
 }
 
 func (c *Calcium) doGetNodeResource(ctx context.Context, nodename string, fix bool) (*types.NodeResource, error) {
+	fmt.Println("========================== doGetNodeResource ==========================")
 	var nr *types.NodeResource
 	return nr, c.withNodeLocked(ctx, nodename, func(ctx context.Context, node *types.Node) error {
 		workloads, err := c.ListNodeWorkloads(ctx, node.Name, nil)
@@ -164,6 +175,7 @@ func (c *Calcium) doGetNodeResource(ctx context.Context, nodename string, fix bo
 			}
 		}
 
+		fmt.Printf("nr name = %s, nr = %v\n", nr.Name, nr)
 		return nil
 	})
 }
