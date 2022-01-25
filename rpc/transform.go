@@ -35,11 +35,13 @@ func toRPCPod(p *types.Pod) *pb.Pod {
 }
 
 func toRPCPodResource(p *types.PodResource) *pb.PodResource {
+	fmt.Println("========================= toRPCPodResource =========================")
 	r := &pb.PodResource{
 		Name:          p.Name,
 		NodesResource: []*pb.NodeResource{},
 	}
 	for _, nodeResource := range p.NodesResource {
+		fmt.Printf("nodeResource.Name = %s", nodeResource.Name)
 		r.NodesResource = append(r.NodesResource, toRPCNodeResource(nodeResource))
 	}
 	return r
