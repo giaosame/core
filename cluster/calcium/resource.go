@@ -15,6 +15,7 @@ import (
 
 // PodResource show pod resource usage
 func (c *Calcium) PodResource(ctx context.Context, podname string) (*types.PodResource, error) {
+	fmt.Println("================== PodResource ==================")
 	nodes, err := c.ListPodNodes(ctx, podname, nil, true)
 	if err != nil {
 		return nil, err
@@ -23,11 +24,15 @@ func (c *Calcium) PodResource(ctx context.Context, podname string) (*types.PodRe
 		Name:          podname,
 		NodesResource: []*types.NodeResource{},
 	}
+
+	fmt.Println("================== Before loop ==================")
 	for _, node := range nodes {
+		fmt.Println("node before c.doGetNodeResource:", node.Name)
 		nodeResource, err := c.doGetNodeResource(ctx, node.Name, false)
 		if err != nil {
 			return nil, err
 		}
+		fmt.Println("node after c.doGetNodeResource:", nodeResource.Name)
 		r.NodesResource = append(r.NodesResource, nodeResource)
 	}
 	return r, nil
@@ -55,6 +60,7 @@ func (c *Calcium) NodeResource(ctx context.Context, nodename string, fix bool) (
 func (c *Calcium) doGetNodeResource(ctx context.Context, nodename string, fix bool) (*types.NodeResource, error) {
 	var nr *types.NodeResource
 	return nr, c.withNodeLocked(ctx, nodename, func(ctx context.Context, node *types.Node) error {
+		fmt.Printf("nodename inside c.doGetNodeResource: %s, node.name = %s\n", nodename, node.Name)
 		workloads, err := c.ListNodeWorkloads(ctx, node.Name, nil)
 		if err != nil {
 			return err
